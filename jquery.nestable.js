@@ -270,10 +270,12 @@
       this.placeEl.replaceWith(el);
 
       this.dragEl.remove();
-      this.el.trigger('change');
-      if ( this.hasNewRoot ) {
-        this.dragRootEl.trigger('change');
-      }
+      setTimeout( function() {
+        this.el.trigger('change');
+        if ( this.hasNewRoot ) {
+          this.dragRootEl.trigger('change');
+        }
+      }.bind(this) );
       this.reset();
     },
 
@@ -378,7 +380,13 @@
         this.dragEl[0].style.visibility = 'hidden';
       }
 
-      this.pointEl = $(document.elementFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
+      this.pointEl = $(document.elementsFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.pageYOffset || document.documentElement.scrollTop)))
+                      .filter('.' + opt.itemClass)
+                      .not($('.' + opt.itemClass, this.dragEl));
+
+      if ( ! this.pointEl.length ) {
+        return;
+      }
 
       if ( ! hasPointerEvents ) {
         this.dragEl[0].style.visibility = 'visible';
@@ -391,9 +399,11 @@
       if ( this.pointEl.hasClass(opt.emptyClass) ) {
         isEmpty = true;
       }
-      else if ( ! this.pointEl.length || ! (this.pointEl.hasClass(opt.itemClass) || this.pointEl.parents().hasClass(opt.itemClass) ) ) {
+      /*
+      else if ( ! this.pointEl.length || ( ! this.pointEl.hasClass(opt.itemClass) && ! this.pointEl.parents().hasClass(opt.itemClass) ) ) {
         return;
       }
+      */
 
       // find parent list of item under cursor
       var pointElRoot = this.pointEl.closest('.' + opt.rootClass),

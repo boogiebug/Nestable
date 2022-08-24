@@ -408,7 +408,7 @@
             if (this.pointEl.hasClass(opt.emptyClass)) {
                 isEmpty = true;
             }
-            else if (!this.pointEl.length || !this.pointEl.hasClass(opt.itemClass)) {
+            else if (!this.pointEl.length || !this.pointEl.parents().hasClass(opt.itemClass)) {
                 return;
             }
 
